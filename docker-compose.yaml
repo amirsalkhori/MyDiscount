@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  server:
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: docker/nginx.dockerfile
+    ports:
+      - 8000:80
+    volumes:
+      - ./app:/var/www/html
+    depends_on:
+      - php
+
+  php:
+    container_name: php
+    build:
+      context: .
+      dockerfile: docker/php.dockerfile
+    ports:
+      - 9000:9000
+    volumes:
+      - ./app:/var/www/html
+  db:
+    image: mysql:5.7
+    container_name: db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: laraveldb
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: laravelpassworddb
+      MYSQL_ROOT_PASSWORD: rootpasswordmysql
+    volumes:
+      - mysqldata:/var/lib/mysql/
+
+volumes:
+  mysqldata:
